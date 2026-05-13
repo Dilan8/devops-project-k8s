@@ -1,0 +1,10 @@
+manifests/base/.gitkeep
+manifests/namespaces/.gitkeep
+manifests/rbac/.gitkeep
+manifests/storage/.gitkeep
+manifests/monitoring/.gitkeep
+helm/frontend/.gitkeep
+helm/backend/.gitkeep
+helm/database/.gitkeep
+cluster/eksctl-config.yaml        ← we will fill this with real content
+docs/setup-guide.md               ← we will fill this
