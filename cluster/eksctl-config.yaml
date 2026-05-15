@@ -2,7 +2,7 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: devops-project3-cluster
+  name: devops-project-cluster
   region: ap-southeast-2
   version: "1.29"
 
@@ -22,7 +22,7 @@ managedNodeGroups:
     labels:
       role: worker
     tags:
-      Project: devops-project3
+      Project: devops-project
       Environment: learning
 
 iam:
