@@ -4,7 +4,7 @@ kind: ClusterConfig
 metadata:
   name: devops-project-cluster
   region: ap-southeast-2
-  version: "1.29"
+  version: "1.30"
 
 availabilityZones:
   - ap-southeast-2a
@@ -12,7 +12,7 @@ availabilityZones:
 
 managedNodeGroups:
   - name: worker-nodes
-    instanceType: t3.medium
+    instanceType: t3.micro
     desiredCapacity: 2
     minSize: 1
     maxSize: 4

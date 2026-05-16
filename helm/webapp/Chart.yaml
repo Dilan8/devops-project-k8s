@@ -1,0 +1,6 @@
+apiVersion: v2
+name: webapp
+description: A 3-tier web application - DevOps Project 3
+type: application
+version: 0.1.0      # chart version — bump this when you change the chart
+appVersion: "1.0.0" # your app version

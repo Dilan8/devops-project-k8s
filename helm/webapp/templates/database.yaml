@@ -1,0 +1,94 @@
+# ── DATABASE SECRET ───────────────────────
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-secret
+  namespace: {{ .Values.namespace }}
+type: Opaque
+stringData:
+  username: {{ .Values.database.credentials.username }}
+  password: {{ .Values.database.credentials.password }}
+  dbname: {{ .Values.database.credentials.dbname }}
+---
+# ── DATABASE PVC ──────────────────────────
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-pvc
+  namespace: {{ .Values.namespace }}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.database.storage }}
+---
+# ── DATABASE DEPLOYMENT ───────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: database
+    tier: database
+spec:
+  replicas: {{ .Values.database.replicas }}
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+        tier: database
+    spec:
+      containers:
+      - name: database
+        image: "{{ .Values.database.image }}:{{ .Values.database.tag }}"
+        ports:
+        - containerPort: {{ .Values.database.port }}
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: password
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: dbname
+        resources:
+          requests:
+            cpu: {{ .Values.database.resources.requests.cpu }}
+            memory: {{ .Values.database.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.database.resources.limits.cpu }}
+            memory: {{ .Values.database.resources.limits.memory }}
+        volumeMounts:
+        - name: db-storage
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: db-storage
+        persistentVolumeClaim:
+          claimName: db-pvc
+---
+# ── DATABASE SERVICE ──────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-svc
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: database
+  ports:
+  - port: 5432
+    targetPort: {{ .Values.database.port }}
+  type: ClusterIP
