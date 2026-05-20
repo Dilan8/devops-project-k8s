@@ -13,7 +13,7 @@ availabilityZones:
 managedNodeGroups:
   - name: worker-nodes
     instanceType: t3.micro
-    desiredCapacity: 2
+    desiredCapacity: 3
     minSize: 1
     maxSize: 4
     volumeSize: 20

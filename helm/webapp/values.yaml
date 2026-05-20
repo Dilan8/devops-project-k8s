@@ -2,7 +2,7 @@
 frontend:
   image: nginx
   tag: "latest"
-  replicas: 2
+  replicas: 1
   port: 80
   resources:
     requests:
@@ -16,7 +16,7 @@ frontend:
 backend:
   image: hashicorp/http-echo
   tag: "latest"
-  replicas: 2
+  replicas: 1
   port: 5678
   resources:
     requests:

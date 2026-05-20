@@ -1,4 +1,3 @@
-# ── DATABASE SECRET ───────────────────────
 apiVersion: v1
 kind: Secret
 metadata:
@@ -6,24 +5,10 @@ metadata:
   namespace: {{ .Values.namespace }}
 type: Opaque
 stringData:
-  username: {{ .Values.database.credentials.username }}
-  password: {{ .Values.database.credentials.password }}
-  dbname: {{ .Values.database.credentials.dbname }}
+  username: {{ .Values.database.credentials.username | quote }}
+  password: {{ .Values.database.credentials.password | quote }}
+  dbname: {{ .Values.database.credentials.dbname | quote }}
 ---
-# ── DATABASE PVC ──────────────────────────
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: db-pvc
-  namespace: {{ .Values.namespace }}
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ .Values.database.storage }}
----
-# ── DATABASE DEPLOYMENT ───────────────────
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,7 +16,6 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     app: database
-    tier: database
 spec:
   replicas: {{ .Values.database.replicas }}
   selector:
@@ -41,7 +25,6 @@ spec:
     metadata:
       labels:
         app: database
-        tier: database
     spec:
       containers:
       - name: database
@@ -66,20 +49,19 @@ spec:
               key: dbname
         resources:
           requests:
-            cpu: {{ .Values.database.resources.requests.cpu }}
-            memory: {{ .Values.database.resources.requests.memory }}
+            cpu: {{ .Values.database.resources.requests.cpu | quote }}
+            memory: {{ .Values.database.resources.requests.memory | quote }}
           limits:
-            cpu: {{ .Values.database.resources.limits.cpu }}
-            memory: {{ .Values.database.resources.limits.memory }}
+            cpu: {{ .Values.database.resources.limits.cpu | quote }}
+            memory: {{ .Values.database.resources.limits.memory | quote }}
         volumeMounts:
         - name: db-storage
           mountPath: /var/lib/postgresql/data
       volumes:
       - name: db-storage
-        persistentVolumeClaim:
-          claimName: db-pvc
+        emptyDir:
+          medium: ""
 ---
-# ── DATABASE SERVICE ──────────────────────
 apiVersion: v1
 kind: Service
 metadata:
